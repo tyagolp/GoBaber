@@ -1,0 +1,36 @@
+{% extends "_layouts/default.njk" %} {% block body%}
+
+<div class="content">
+  <strong>Agendando Horário</strong>
+  <div class="provider">
+    <div>
+      <img src="/files/{{ provider.avatar }}" />
+      <strong>{{ provider.name }}</strong>
+    </div>
+  </div>
+
+  <form action="/app/appointment/new/{{ provider.id }}" method="post">
+    <input type="text" class="flatpickr" placeholder="Encolha uma data" />
+
+    <div id="hours"></div>
+
+    <button type="submit">Agendar</button>
+  </form>
+</div>
+
+<script type="text/javascript">
+  console.log("Init");
+  flatpickr(".flatpickr", {
+    minDate: new Date(),
+    dateFormat: "d/m/y",
+    onChange : function(date){
+      fetch(`/app/avaliable/{{ provider.id}}?date=${date[0].getTime()}`).then(function (response){
+        response.text().then(function (html){
+          document.getElementById('hours').innerHTML = html
+        })
+      })
+    }
+  });
+  console.log("fim");
+</script>
+{% endblock %}
